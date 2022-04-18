@@ -84,7 +84,8 @@ def get_item_for_day(daily_items, day):
     """ Returns main_index, item for `day`. """
 
     jan1 = day.replace(month=1, day=1)
-    main_index = (day - jan1).days % len(daily_items)
+    index = (day - jan1).days
+    main_index = index % len(daily_items)
     item = daily_items[main_index]
     if type(item) is str:
         return main_index, item
@@ -92,7 +93,7 @@ def get_item_for_day(daily_items, day):
     # See how many previous times we've hit this list so far this year.
     # As this resets every year this method currently favors earlier list
     # elements over later elements.
-    nth_time = main_index // len(daily_items)
+    nth_time = index // len(daily_items)
     return main_index, item[nth_time % len(item)]
 
 
