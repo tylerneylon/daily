@@ -23,6 +23,8 @@
     then that sublist is hit once every n days, and the items in that sublist
     are similarly cycled throughout the year.
 """
+# TODO: Update the help string and readme to explain
+#       named work tracks and independent reminders.
 
 # ======================================================================
 # Imports
