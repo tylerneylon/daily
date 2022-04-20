@@ -76,25 +76,25 @@ def list_whole_year(daily_items):
         # [Today] . Mon Apr 18 . i % n . item
         prefix = ' Today' if day == today else '      '
         date_str = day.strftime('%a %b %d')
-        main_index, item = get_item_for_day(daily_items, day)
-        print(' . '.join([prefix, date_str, str(main_index), item]))
+        index, item = get_item_for_day(daily_items, day)
+        print(' . '.join([prefix, date_str, f'{index:03}', item]))
         day += timedelta(days=1)
 
 def get_item_for_day(daily_items, day):
-    """ Returns main_index, item for `day`. """
+    """ Returns index, item for `day`. """
 
     jan1 = day.replace(month=1, day=1)
     index = (day - jan1).days
     main_index = index % len(daily_items)
     item = daily_items[main_index]
     if type(item) is str:
-        return main_index, item
+        return index, item
 
     # See how many previous times we've hit this list so far this year.
     # As this resets every year this method currently favors earlier list
     # elements over later elements.
     nth_time = index // len(daily_items)
-    return main_index, item[nth_time % len(item)]
+    return index, item[nth_time % len(item)]
 
 
 # ======================================================================
