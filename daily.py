@@ -80,21 +80,47 @@ def list_whole_year(daily_items):
         print(' . '.join([prefix, date_str, f'{index:03}', item]))
         day += timedelta(days=1)
 
+def get_item_from_list(index, items, name=None):
+    """ Returns today's item (using `index` to understand what today is) from
+        the list `items`, which may be a list of strings or of lists of strings.
+        If `name` is provided, then the return value is f'{name}:[{item}]'.
+    """
+    i = index % len(items)
+    item = items[i]
+    if type(item) is not str:
+        # See how many previous times we've hit this list so far this year.
+        # As this resets every year this method currently favors earlier list
+        # elements over later elements.
+        nth_time = index // len(items)
+        item = item[nth_time % len(item)]
+    return item if name is None else f'{name}:[{item}]'
+
 def get_item_for_day(daily_items, day):
     """ Returns index, item for `day`. """
 
     jan1 = day.replace(month=1, day=1)
     index = (day - jan1).days
-    main_index = index % len(daily_items)
-    item = daily_items[main_index]
-    if type(item) is str:
-        return index, item
 
-    # See how many previous times we've hit this list so far this year.
-    # As this resets every year this method currently favors earlier list
-    # elements over later elements.
-    nth_time = index // len(daily_items)
-    return index, item[nth_time % len(item)]
+    if type(daily_items) is list:
+        return index, get_item_from_list(index, daily_items)
+
+    # Otherwise, we're expecting to have a dictionary.
+    assert type(daily_items) is dict
+
+    reminders = []
+    for key, value in daily_items.items():
+        if type(value) is list:
+            # Given a list, the key is the name of a track of work, and the
+            # reminder for today is what to do within that track today.
+            reminders.append(get_item_from_list(index, value, name=key))
+        else:
+            # Given an integer, the key is the reminder string itself, and
+            # the integer is how many days to wait between reminders.
+            assert type(value) is int
+            if index % value == 0:
+                reminders.append(key)
+
+    return index, ', '.join(reminders)
 
 
 # ======================================================================
