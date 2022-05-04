@@ -67,6 +67,19 @@ def load_daily_items():
     with open(str(filepath)) as f:
         return json.load(f)
 
+def print_day_and_item(daily_items, day, do_show_prefix=True):
+    # The format is:
+    # [Today] . Mon Apr 18 . i % n . item
+    prefix = ' Today' if day == date.today() else '      '
+    if not do_show_prefix:
+        prefix = ''
+    date_str = day.strftime('%a %b %d')
+    index, item = get_item_for_day(daily_items, day)
+    print_items = [prefix, date_str, f'{index:03}', item]
+    if not do_show_prefix:
+        del print_items[0]
+    print(' . '.join(print_items))
+
 def list_whole_year(daily_items):
 
     today = date.today()
@@ -74,12 +87,7 @@ def list_whole_year(daily_items):
     day   = today.replace(month=1, day=1)
 
     while day.year == year:
-        # The format is:
-        # [Today] . Mon Apr 18 . i % n . item
-        prefix = ' Today' if day == today else '      '
-        date_str = day.strftime('%a %b %d')
-        index, item = get_item_for_day(daily_items, day)
-        print(' . '.join([prefix, date_str, f'{index:03}', item]))
+        print_day_and_item(daily_items, day)
         day += timedelta(days=1)
 
 def get_item_from_list(index, items, name=None):
@@ -137,9 +145,7 @@ def main():
         sys.exit(0)
 
     if len(sys.argv) == 1:
-        today = date.today()
-        _, item = get_item_for_day(daily_items, today)
-        print(item)
+        print_day_and_item(daily_items, date.today(), do_show_prefix=False)
         sys.exit(0)
 
     # If we get here, we got weird command-line parameters. Barf out help.
