@@ -7,6 +7,8 @@
 
         daily -l  # List all of this year's items.
 
+        daily -s  # List items for today and days in the near past & future.
+
     (Assuming you've got a `daily` link to this script in your path.)
 
     Uses the file `~/.daily.json` in order to suggest today's reminder.  The
@@ -80,14 +82,15 @@ def print_day_and_item(daily_items, day, do_show_prefix=True):
         del print_items[0]
     print(' . '.join(print_items))
 
-def list_whole_year(daily_items):
+def list_whole_year(daily_items, do_short_list=False):
 
     today = date.today()
     year  = today.year
     day   = today.replace(month=1, day=1)
 
     while day.year == year:
-        print_day_and_item(daily_items, day)
+        if (not do_short_list) or (abs((day - today).days) < 4):
+            print_day_and_item(daily_items, day)
         day += timedelta(days=1)
 
 def get_item_from_list(index, items, name=None):
@@ -142,6 +145,10 @@ def main():
 
     if len(sys.argv) == 2 and sys.argv[1] == '-l':
         list_whole_year(daily_items)
+        sys.exit(0)
+
+    if len(sys.argv) == 2 and sys.argv[1] == '-s':
+        list_whole_year(daily_items, do_short_list=True)
         sys.exit(0)
 
     if len(sys.argv) == 1:
