@@ -23,6 +23,8 @@ Usage:
 
     daily -l  # List all of this year's items.
 
+    daily -s  # List items for today and days in the near past & future.
+
 (Assuming you've got a `daily` link to this script in your path.)
 
 Uses the file `~/.daily.json` in order to suggest today's reminder.  The

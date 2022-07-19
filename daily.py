@@ -32,6 +32,7 @@
 # Imports
 
 import json
+import os
 import sys
 
 from datetime import date, timedelta
@@ -108,6 +109,22 @@ def get_item_from_list(index, items, name=None):
         item = item[nth_time % len(item)]
     return item if name is None else f'{name}:[{item}]'
 
+def run_bash_items(daily_items):
+    """ Run and print out the result of any bash scripts.
+        This removes those items from daily_items. """
+
+    if type(daily_items) is list:
+        return
+
+    to_delete = []
+    for key, value in daily_items.items():
+        if type(value) is str:
+            print(key)
+            os.system(value)
+            to_delete.append(key)
+    for key in to_delete:
+        del daily_items[key]
+
 def get_item_for_day(daily_items, day):
     """ Returns index, item for `day`. """
 
@@ -144,14 +161,17 @@ def main():
     daily_items = load_daily_items()
 
     if len(sys.argv) == 2 and sys.argv[1] == '-l':
+        run_bash_items(daily_items)
         list_whole_year(daily_items)
         sys.exit(0)
 
     if len(sys.argv) == 2 and sys.argv[1] == '-s':
+        run_bash_items(daily_items)
         list_whole_year(daily_items, do_short_list=True)
         sys.exit(0)
 
     if len(sys.argv) == 1:
+        run_bash_items(daily_items)
         print_day_and_item(daily_items, date.today(), do_show_prefix=False)
         sys.exit(0)
 
