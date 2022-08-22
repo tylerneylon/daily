@@ -48,6 +48,11 @@ FILENAME = '.daily.json'
 # ======================================================================
 # Functions
 
+def load_jsons(f):
+    """ Load a json file, ignoring lines that begin with a # character. """
+    lines = [line for line in f if not line.startswith('#')]
+    return json.loads(' '.join(lines))
+
 def get_daily_filepath():
     """ If a path can be found to an existing daily.json file, this returns a
         Path object pointing to it. It first looks in ~, and then in the
@@ -68,7 +73,7 @@ def load_daily_items():
         print('You can place one in ~ or in the directory of this script.\n')
         sys.exit(1)
     with open(str(filepath)) as f:
-        return json.load(f)
+        return load_jsons(f)
 
 def print_day_and_item(daily_items, day, do_show_prefix=True):
     # The format is:
